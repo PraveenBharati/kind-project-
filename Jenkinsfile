@@ -38,9 +38,17 @@ pipeline {
             }
         }
        stage('Push Images') {
-            steps {
-                sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}-backend'
-                sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}-frontend'
+           steps {
+                echo '===== Pushing image to AWS ECR ====='
+                withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
+                    sh '''
+                        aws ecr get-login-password --region ${AWS_REGION} | \
+                          docker login --username AWS --password-stdin ${ECR_REGISTRY}
+
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${IMAGE_NAME}:latest
+                    '''
+                }
             }
         }
     }
