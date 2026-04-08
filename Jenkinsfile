@@ -20,24 +20,28 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+         stage('Checkout') {
             steps {
                 echo '===== Pulling source code from GitHub ====='
                 checkout scm
             }
         }
-
-        stage('Build & Unit Tests') {
+        
+        stage('Build Backend') {
             steps {
-                echo '===== Compiling code and running tests ====='
-                sh 'mvn clean test -B'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
+                sh 'docker build -t $DOCKER_USER/$IMAGE_BACKEND ./backend'
             }
         }
-
+        stage('Build Frontend') {
+            steps {
+                sh 'docker build -t $DOCKER_USER/$IMAGE_FRONTEND ./frontend'
+            }
+        }
+       stage('Push Images') {
+            steps {
+                sh 'docker push $DOCKER_USER/$IMAGE_BACKEND'
+                sh 'docker push $DOCKER_USER/$IMAGE_FRONTEND'
+            }
+        }
     }
 }
