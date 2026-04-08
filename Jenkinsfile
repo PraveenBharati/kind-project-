@@ -29,12 +29,12 @@ pipeline {
         
         stage('Build Backend') {
             steps {
-                sh 'docker build -t -t ${IMAGE_NAME}:${IMAGE_TAG}-backend ./backend'
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG}-backend ./backend'
             }
         }
         stage('Build Frontend') {
             steps {
-                sh 'docker build -t -t ${IMAGE_NAME}:${IMAGE_TAG}-frontend ./frontend'
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG}-frontend ./frontend'
             }
         }
        stage('Push Images') {
