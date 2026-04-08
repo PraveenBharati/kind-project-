@@ -26,6 +26,30 @@ pipeline {
                 checkout scm
             }
         }
+         stage('SonarQube Analysis') {
+    steps {
+        echo '===== Running SonarQube code quality scan ====='
+        withSonarQubeEnv('SonarQube') {
+            sh '''
+            sonar-scanner \
+              -Dsonar.projectKey=devsecops-project \
+              -Dsonar.projectName="devsecops-project" \
+              -Dsonar.sources=. \
+              -Dsonar.exclusions=**/node_modules/**,**/*.test.js \
+              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            '''
+        }
+    }
+}
+
+        stage('Quality Gate') {
+    steps {
+        echo '===== Waiting for SonarQube quality gate result ====='
+        timeout(time: 5, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
+        }
+    }
+}
         
         stage('Build Backend') {
             steps {
