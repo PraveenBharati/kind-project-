@@ -29,18 +29,18 @@ pipeline {
         
         stage('Build Backend') {
             steps {
-                sh 'docker build -t $DOCKER_USER/$IMAGE_BACKEND ./backend'
+                sh 'docker build -t -t ${IMAGE_NAME}:${IMAGE_TAG}-backend ./backend'
             }
         }
         stage('Build Frontend') {
             steps {
-                sh 'docker build -t $DOCKER_USER/$IMAGE_FRONTEND ./frontend'
+                sh 'docker build -t -t ${IMAGE_NAME}:${IMAGE_TAG}-frontend ./frontend'
             }
         }
        stage('Push Images') {
             steps {
-                sh 'docker push $DOCKER_USER/$IMAGE_BACKEND'
-                sh 'docker push $DOCKER_USER/$IMAGE_FRONTEND'
+                sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}-backend'
+                sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}-frontend'
             }
         }
     }
